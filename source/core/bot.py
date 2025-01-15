@@ -1,8 +1,11 @@
 from discord.ext import commands
-from logging import handlers, Formatter
-import logging, yaml, os, discord, sys
+from logging import Formatter
+import logging
+import os, sys, pathlib
+import yaml, discord
 
-with open("config.yml", "r") as file:
+config_file = pathlib.Path(__file__).parents[1] / 'glob/config.yml'
+with open(config_file) as file:
     config = yaml.load(file, Loader=yaml.FullLoader)
             
 class Routine(commands.Bot):
