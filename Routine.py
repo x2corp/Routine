@@ -1,2 +1,3 @@
-import asyncio; from source.core.bot import create_client
-asyncio.run(create_client())
+import asyncio
+from source.core.bot import initialize
+asyncio.run(initialize())

@@ -1,7 +1,6 @@
 from discord.ext import commands
 from logging import handlers, Formatter
-from .. import cogs
-import logging, yaml, os, discord
+import logging, yaml, os, discord, sys
 
 with open("config.yml", "r") as file:
     config = yaml.load(file, Loader=yaml.FullLoader)
@@ -9,23 +8,20 @@ with open("config.yml", "r") as file:
 class Routine(commands.Bot):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.config = config
     
     async def setup_hook(self) -> None:
         for extension in os.listdir("./source/cogs"):
           if extension.endswith(".py"):
               await self.load_extension(f"source.cogs.{extension[:-3]}")
 
-        logger = logging.getLogger('main')
-        logger.setLevel(logging.WARN)
+        logger = logging.getLogger()
+        logger.setLevel(logging.DEBUG)
 
-        handler = handlers.BaseRotatingHandler(
-            filename='Routine.log',
-            mode='a',
-            delay=True
-        )
+        handler = logging.StreamHandler(sys.stdout)
+        handler.setLevel(logging.DEBUG)
 
-        datetime_format = '%d/%m/%Y %H:%M'
-        formatter = Formatter('[{asctime} | {levelname}] {name}: {message}', datetime_format, style='{')
+        formatter = Formatter('[%(asctime)s | %(levelname)s] %(name)s - %(message)s')
         handler.setFormatter(formatter)
         logger.addHandler(handler)
         
@@ -35,11 +31,12 @@ class Routine(commands.Bot):
             round(self.latency, 1)
         ))
 
-async def create_client() -> None:
+intents = discord.Intents.default()
+intents.message_content = True
+async def initialize() -> None:
     async with Routine(
         command_prefix = config['prefix'],
-        description = "Akatsuki-focused Discord bot",
-        intents = discord.Intents.all()
+        description = "Rhythm-game focused Discord bot",
+        intents = intents
     ) as bot:
         await bot.start(config["token"])
-
