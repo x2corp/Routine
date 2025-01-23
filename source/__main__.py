@@ -3,8 +3,9 @@ from logging import Formatter
 import logging
 import os, sys, pathlib
 import yaml, discord
+import asyncio
 
-config_file = pathlib.Path(__file__).parents[1] / 'glob/config.yml'
+config_file = pathlib.Path(__file__).parents[0] / 'glob/config.yml'
 with open(config_file) as file:
     config = yaml.load(file, Loader=yaml.FullLoader)
             
@@ -19,10 +20,10 @@ class Routine(commands.Bot):
               await self.load_extension(f"source.cogs.{extension[:-3]}")
 
         logger = logging.getLogger()
-        logger.setLevel(logging.DEBUG)
+        logger.setLevel(logging.INFO)
 
         handler = logging.StreamHandler(sys.stdout)
-        handler.setLevel(logging.DEBUG)
+        handler.setLevel(logging.INFO)
 
         formatter = Formatter('[%(asctime)s | %(levelname)s] %(name)s - %(message)s')
         handler.setFormatter(formatter)
@@ -34,12 +35,14 @@ class Routine(commands.Bot):
             round(self.latency, 1)
         ))
 
-intents = discord.Intents.default()
-intents.message_content = True
-async def initialize() -> None:
+async def initialize(supplied_intents) -> None:
     async with Routine(
         command_prefix = config['prefix'],
         description = "Rhythm-game focused Discord bot",
-        intents = intents
+        intents = supplied_intents
     ) as bot:
         await bot.start(config["token"])
+
+intents = discord.Intents.default()
+intents.message_content = True
+asyncio.run(initialize(intents))

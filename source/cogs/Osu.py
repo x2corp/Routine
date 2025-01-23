@@ -2,18 +2,15 @@ from discord.ext import commands
 from discord import Color
 import requests, json, discord
 
-class Rhythia(commands.Cog):
+class Osu(commands.Cog):
     def __init__(self, bot):
         self.bot: commands.AutoShardedBot = bot
         self.API_BASE: str = "https://development.rhythia.com/api/"
         self.SEARCH_USERS: str = "searchUsers"
         self.GET_PROFILE: str = "getProfile"
     
-    @commands.command(
-        aliases = ['rp', 'rhythiaprofile', 'rprofile'],
-        pass_context = True
-    )
-    async def rhythia(self, ctx: commands.Context, username: str):
+    @commands.command(pass_context=True)
+    async def osu(self, ctx: commands.Context, username: str):
         if not username:
             await ctx.send('Please provide a valid username.'); return
         
@@ -78,4 +75,4 @@ class Rhythia(commands.Cog):
         await ctx.channel.send(embed = embed)
         
 async def setup(bot: commands.AutoShardedBot):
-    await bot.add_cog(Rhythia(bot))
+    await bot.add_cog(Osu(bot))

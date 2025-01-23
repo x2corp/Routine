@@ -1,3 +1,1 @@
-import asyncio
-from source.core.bot import initialize
-asyncio.run(initialize())
+import source.__main__
